@@ -1,0 +1,4 @@
+[package]
+name = "goblin-game-engine"
+version = "0.1.0"
+authors = ["pmosakowski <pmosakowski@users.noreply.github.com>"]
