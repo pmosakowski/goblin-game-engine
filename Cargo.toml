@@ -5,3 +5,4 @@ authors = ["pmosakowski <pmosakowski@users.noreply.github.com>"]
 
 [dependencies]
 num = "*"
+glium = "0.9.1"

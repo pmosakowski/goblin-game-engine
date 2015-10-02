@@ -7,3 +7,5 @@ mod interpolator_tests;
 pub mod matrix;
 pub mod vector;
 mod tests;
+
+pub mod window;
