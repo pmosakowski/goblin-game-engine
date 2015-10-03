@@ -1,6 +1,8 @@
+use super::matrix::Matrix2d;
+
 #[test]
 fn test_identity_matrix_creation() {
-    use matrix::Matrix2d;
+    use super::matrix::Matrix2d;
     let identity = Matrix2d::identity();
 
     assert_eq!(identity.data[0], [1.0, 0.0, 0.0]);
@@ -10,7 +12,7 @@ fn test_identity_matrix_creation() {
 
 #[test]
 fn test_matrix_multiplication() {
-    use matrix::Matrix2d;
+    use super::matrix::Matrix2d;
     let identity = Matrix2d::identity();
     let mut a = Matrix2d::new();
     a.data[0][1] = 2.0;
@@ -32,7 +34,7 @@ fn test_matrix_multiplication() {
 
 #[test]
 fn test_vector_creation () {
-    use vector::Vector2d;
+    use super::vector::Vector2d;
     let v1 = Vector2d::new(5.0, 10.0);
 
     assert_eq!(v1.get_pos(), (5.0, 10.0));
@@ -40,8 +42,8 @@ fn test_vector_creation () {
 
 #[test]
 fn test_matrix_vector_multiplication () {
-    use matrix::Matrix2d;
-    use vector::Vector2d;
+    use super::matrix::Matrix2d;
+    use super::vector::Vector2d;
 
     let identity = Matrix2d::identity();
     let v1 = Vector2d::new(-5.0, 3.0);
@@ -53,8 +55,8 @@ fn test_matrix_vector_multiplication () {
 
 #[test]
 fn test_matrix_rotation () {
-    use matrix::{Matrix2d, PI};
-    use vector::Vector2d;
+    use super::matrix::{Matrix2d, PI};
+    use super::vector::Vector2d;
 
     let rotation = Matrix2d::identity().rotate(PI/2.0);
     let v1 = Vector2d::new(10.0, 0.0);
@@ -68,8 +70,8 @@ fn test_matrix_rotation () {
 
 #[test]
 fn test_matrix_translation () {
-    use matrix::Matrix2d;
-    use vector::Vector2d;
+    use super::matrix::Matrix2d;
+    use super::vector::Vector2d;
 
     let translation = Matrix2d::identity().translate(-2.0, 3.0);
     let v1 = Vector2d::new(5.0, 6.0);
@@ -80,8 +82,8 @@ fn test_matrix_translation () {
 
 #[test]
 fn test_matrix_scaling () {
-    use matrix::Matrix2d;
-    use vector::Vector2d;
+    use super::matrix::Matrix2d;
+    use super::vector::Vector2d;
     let scale = Matrix2d::identity().scale(4.0, 2.0);
     let v1 = Vector2d::new(0.5, 0.5);
     let v2 = scale * v1;
@@ -91,7 +93,7 @@ fn test_matrix_scaling () {
 
 #[test]
 fn test_vector3d_creation () {
-    use vector::Vector3d;
+    use super::vector::Vector3d;
     let v1 = Vector3d::new(1.0, 1.0, 1.0);
 
     assert_eq!(v1.get_pos(), (1.0, 1.0, 1.0));
@@ -99,7 +101,7 @@ fn test_vector3d_creation () {
 
 #[test]
 fn test_matrix3d_identity_creation() {
-    use matrix::Matrix3d;
+    use super::matrix::Matrix3d;
     let identity = Matrix3d::identity();
 
     assert_eq!(identity.data[0], [1.0, 0.0, 0.0, 0.0]);
@@ -110,7 +112,7 @@ fn test_matrix3d_identity_creation() {
 
 #[test]
 fn test_matrix3d_multiplication() {
-    use matrix::Matrix3d;
+    use super::matrix::Matrix3d;
     let identity = Matrix3d::identity();
 
     let mut a = Matrix3d::new();
@@ -135,8 +137,8 @@ fn test_matrix3d_multiplication() {
 
 #[test]
 fn test_matrix3d_vector3d_multiplication () {
-    use matrix::Matrix3d;
-    use vector::Vector3d;
+    use super::matrix::Matrix3d;
+    use super::vector::Vector3d;
 
     let identity = Matrix3d::identity();
     let v1 = Vector3d::new(-5.0, 3.0, 1.0);
@@ -150,8 +152,8 @@ fn test_matrix3d_vector3d_multiplication () {
 
 #[test]
 fn test_matrix3d_rotation () {
-    use matrix::{Matrix3d, PI};
-    use vector::Vector3d;
+    use super::matrix::{Matrix3d, PI};
+    use super::vector::Vector3d;
 
     let rotation = Matrix3d::identity().rotate(PI/2.0, PI/2.0, 0.0);
     let v1 = Vector3d::new(0.0, 0.0, 10.0);
@@ -167,8 +169,8 @@ fn test_matrix3d_rotation () {
 
 #[test]
 fn test_matrix3d_rotation_x () {
-    use matrix::{Matrix3d, PI};
-    use vector::Vector3d;
+    use super::matrix::{Matrix3d, PI};
+    use super::vector::Vector3d;
 
     let rotation = Matrix3d::identity().rotate_x(PI/2.0);
     let v1 = Vector3d::new(0.0, 10.0, 0.0);
@@ -184,8 +186,8 @@ fn test_matrix3d_rotation_x () {
 
 #[test]
 fn test_matrix3d_rotation_y () {
-    use matrix::{Matrix3d, PI};
-    use vector::Vector3d;
+    use super::matrix::{Matrix3d, PI};
+    use super::vector::Vector3d;
 
     let rotation = Matrix3d::identity().rotate_y(PI/2.0);
     let v1 = Vector3d::new(10.0, 0.0, 0.0);
@@ -201,8 +203,8 @@ fn test_matrix3d_rotation_y () {
 
 #[test]
 fn test_matrix3d_rotation_z () {
-    use matrix::{Matrix3d, PI};
-    use vector::Vector3d;
+    use super::matrix::{Matrix3d, PI};
+    use super::vector::Vector3d;
 
     let rotation = Matrix3d::identity().rotate_z(PI/2.0);
     let v1 = Vector3d::new(10.0, 10.0, 0.0);

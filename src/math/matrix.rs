@@ -5,7 +5,7 @@ pub struct Matrix2d {
     pub data: [[f32; 3]; 3],
 }
 
-use vector::Vector2d;
+use super::vector::Vector2d;
 impl Matrix2d {
     pub fn new() -> Matrix2d {
         Matrix2d::identity()
@@ -101,7 +101,7 @@ pub struct Matrix3d {
     pub data: [[f32; 4]; 4],
 }
 
-use vector::Vector3d;
+use super::vector::Vector3d;
 impl Matrix3d {
     pub fn new() -> Matrix3d {
         Matrix3d::identity()
