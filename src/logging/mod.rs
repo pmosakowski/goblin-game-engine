@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod tests;
+
 pub struct Logger<'a> {
     handler: Box<LogHandler + 'a>,
 }
@@ -38,5 +41,3 @@ impl LogHandler for StderrLogHandler {
         self.buffer.push(msg.clone());
     }
 }
-
-mod tests;

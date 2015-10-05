@@ -1,6 +1,7 @@
 extern crate num;
 use self::num::traits::{Num, FromPrimitive, ToPrimitive};
 
+#[cfg(test)]
 mod tests;
 
 // enums used in interpolator constructor

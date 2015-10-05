@@ -1,5 +1,8 @@
 extern crate glium;
 
+#[cfg(test)]
+mod tests;
+
 struct Window {
     width: i32,
     height: i32,
@@ -13,5 +16,3 @@ impl Window {
         }
     }
 }
-
-mod tests;
