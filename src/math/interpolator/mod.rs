@@ -1,4 +1,7 @@
-use num::traits::{Num, FromPrimitive, ToPrimitive};
+extern crate num;
+use self::num::traits::{Num, FromPrimitive, ToPrimitive};
+
+mod tests;
 
 // enums used in interpolator constructor
 pub enum FunctionType {
@@ -17,9 +20,9 @@ pub enum Repeat {
 mod control {
     use std::rc::Rc;
     use std::cell::Cell;
-    use interpolator::function::{Function, Linear};
-    use interpolator::{Param, Repeat};
-    use num::traits::{Num, ToPrimitive, FromPrimitive};
+    use super::function::{Function, Linear};
+    use super::{Param, Repeat};
+    use super::num::traits::{Num, ToPrimitive, FromPrimitive};
 
     pub fn enum_to_control<'a,T:'a + Copy + Num + ToPrimitive + FromPrimitive>(repeat: Repeat, params: Param<T>) -> Rc<Control<T> + 'a> {
         match repeat {
@@ -103,8 +106,8 @@ mod control {
 
 mod function {
     use std::rc::Rc;
-    use interpolator::{FunctionType, Param};
-    use num::traits::{Num, FromPrimitive, ToPrimitive};
+    use super::{FunctionType, Param};
+    use super::num::traits::{Num, FromPrimitive, ToPrimitive};
 
     fn enum_to_function<'a,T: Copy + Num + ToPrimitive + FromPrimitive>(function: FunctionType, params: &'a Param<T>) -> Rc<Function<T> + 'a> {
         match function {
@@ -235,7 +238,7 @@ pub trait Interpolatable {
 
 impl<'a,T> Interpolatable for Interpolator<'a,T> where T: Copy {
     fn update(&self, timedelta: u32) {
-        use interpolator::function::Function;
+        use self::function::Function;
 
         self.value.set(self.repeat.control(timedelta));
     }

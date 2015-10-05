@@ -1,7 +1,7 @@
 #[test]
 fn test_interpolator_creation_and_update() {
     use std::rc::Rc;
-    use interpolator::{Interpolatable, Interpolator, FunctionType, Repeat};
+    use super::{Interpolatable, Interpolator, FunctionType, Repeat};
 
     let inter = Rc::new(Interpolator::new(FunctionType::Linear, Repeat::Once, 0, 1000, 100));
     let inter_trait: Rc<Interpolatable> = inter.clone();
@@ -22,7 +22,7 @@ fn test_interpolator_creation_and_update() {
 #[test]
 fn test_wrap_interpolator() {
     use std::rc::Rc;
-    use interpolator::{Interpolatable, Interpolator, FunctionType, Repeat};
+    use super::{Interpolatable, Interpolator, FunctionType, Repeat};
 
     let inter = Rc::new(Interpolator::new(FunctionType::Linear, Repeat::Wrap, 0, 1000, 100));
     let inter_trait: Rc<Interpolatable> = inter.clone();
