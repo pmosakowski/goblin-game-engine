@@ -9,13 +9,13 @@ impl<'a> Logger<'a> {
         }
     }
 
-    pub fn debug(&mut self, msg: String) {
+    pub fn debug(&mut self, msg: &String) {
         self.handler.output(msg);
     }
 }
 
 pub trait LogHandler {
-    fn output(&mut self, msg: String);
+    fn output(&mut self, msg: &String);
 }
 
 pub struct FileLogHandler {
@@ -23,7 +23,20 @@ pub struct FileLogHandler {
 }
 
 impl LogHandler for FileLogHandler {
-    fn output(&mut self, msg: String) {
-        self.buffer.push(msg);
+    fn output(&mut self, msg: &String) {
+        self.buffer.push(msg.clone());
     }
 }
+
+pub struct StderrLogHandler {
+    buffer: Vec<String>,
+    // needs stdout fd and something implementing io::Write
+}
+
+impl LogHandler for StderrLogHandler {
+    fn output(&mut self, msg: &String) {
+        self.buffer.push(msg.clone());
+    }
+}
+
+mod tests;
