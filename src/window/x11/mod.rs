@@ -2,7 +2,7 @@ extern crate x11 as libx11;
 extern crate libc;
 
 use self::libx11::xlib;
-use std::ptr::null;
+use std::ptr::{null, null_mut};
 use std::mem::zeroed;
 
 pub struct X11Window<'a> {
@@ -15,9 +15,12 @@ pub struct X11Window<'a> {
 }
 
 impl<'a> X11Window<'a> {
-    pub fn new(width: u32, height: u32) -> X11Window<'a> {
+    pub fn new(width: u32, height: u32) -> Result<X11Window<'a>, String> {
         unsafe {
             let disp = xlib::XOpenDisplay(null());
+            if disp == null_mut() {
+                return Err(String::from("Can't open display"))
+            }
             let scr = xlib::XDefaultScreen(disp);
             let root_win = xlib::XRootWindow(disp,scr);
             let black = xlib::XBlackPixel(disp, scr);
@@ -59,14 +62,14 @@ impl<'a> X11Window<'a> {
                 }
             }
 
-            X11Window {
+            Ok(X11Window {
                 width: width,
                 height: height,
                 display: &mut *disp,
                 screen: scr,
                 window: win,
                 gc: gc,
-            }
+            })
         }
     }
 
