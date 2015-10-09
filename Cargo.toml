@@ -6,4 +6,6 @@ authors = ["pmosakowski <pmosakowski@users.noreply.github.com>"]
 [dependencies]
 libc = "*"
 num = "*"
-x11-dl = "*"
+
+[dependencies.x11]
+features = ["xlib"]
