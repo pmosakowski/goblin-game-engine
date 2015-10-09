@@ -1,8 +1,9 @@
 [package]
-name = "goblin-game-engine"
+name = "goblin"
 version = "0.1.0"
 authors = ["pmosakowski <pmosakowski@users.noreply.github.com>"]
 
 [dependencies]
+libc = "*"
 num = "*"
-glium = "0.9.1"
+x11-dl = "*"
