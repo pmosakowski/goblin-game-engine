@@ -48,19 +48,6 @@ impl<'a> X11Window<'a> {
             let mut gcval: xlib::XGCValues = zeroed();
             let gc = xlib::XCreateGC(disp, win, 0, &mut gcval);
 
-            xlib::XSetForeground(disp, gc, black);
-            xlib::XDrawLine(disp, win, gc, 10, 10,190,190); //from-to
-            xlib::XDrawLine(disp, win, gc, 10,190,190, 10);
-
-            let mouse_events = xlib::ButtonPressMask | xlib::ButtonReleaseMask;
-            xlib::XSelectInput(disp, win, mouse_events);
-            loop {
-                xlib::XNextEvent(disp, &mut e);
-                match e.get_type() {
-                    xlib::ButtonRelease => {break;},
-                    _ => {},
-                }
-            }
 
             Ok(X11Window {
                 width: width,
@@ -70,6 +57,26 @@ impl<'a> X11Window<'a> {
                 window: win,
                 gc: gc,
             })
+        }
+    }
+
+    pub fn update(&mut self) {
+        unsafe {
+            let black = xlib::XBlackPixel(self.display, self.screen);
+            xlib::XSetForeground(self.display, self.gc, black);
+            xlib::XDrawLine(self.display, self.window, self.gc, 10, 10,190,190); //from-to
+            xlib::XDrawLine(self.display, self.window, self.gc, 10,190,190, 10);
+
+            let mouse_events = xlib::ButtonPressMask | xlib::ButtonReleaseMask;
+            xlib::XSelectInput(self.display, self.window, mouse_events);
+            let mut e: xlib::XEvent = zeroed();
+            loop {
+                xlib::XNextEvent(self.display, &mut e);
+                match e.get_type() {
+                    xlib::ButtonRelease => {break;},
+                    _ => {},
+                }
+            }
         }
     }
 

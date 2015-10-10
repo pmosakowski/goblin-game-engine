@@ -3,5 +3,7 @@ extern crate goblin;
 use goblin::window::Window; 
 
 fn main() {
-    Window::new(640, 480);
+    let mut win = Window::new(640, 480).unwrap();
+    win.update();
+    win.close();
 }
