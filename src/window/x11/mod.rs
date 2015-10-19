@@ -69,8 +69,8 @@ impl<'a> X11Window<'a> {
             for x in 0..640 {
                 for y in 0..480 {
                     let pad = 00;
-                    let red = (x % 256);
-                    let green = (y % 256);
+                    let red = x % 256;
+                    let green = y % 256;
                     let blue = 256 - (x % 256);
                     let color = (pad << 24) + (red << 16) + (green << 8) + blue;
                     xlib::XPutPixel(buffer.ximage, x, y, color as u64);
