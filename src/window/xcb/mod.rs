@@ -59,7 +59,53 @@ extern {
                       num_points: uint32_t,
                       points: *const xcb_point_t) -> xcb_void_cookie_t;
 
+    fn xcb_poly_rectangle(conn:           *mut xcb_connection_t,
+                           drawable:       xcb_drawable_t,
+                           gc:             xcb_gcontext_t,
+                           rectangles_len: uint32_t,
+                           rectangles:     *const xcb_rectangle_t) -> xcb_void_cookie_t;
+
+    fn xcb_poly_fill_rectangle(conn:           *mut xcb_connection_t,
+                               drawable:       xcb_drawable_t,
+                               gc:             xcb_gcontext_t,
+                               rectangles_len: uint32_t,
+                               rectangles:     *const xcb_rectangle_t) -> xcb_void_cookie_t;
+
     fn xcb_wait_for_event(conn: *mut xcb_connection_t) -> *mut xcb_generic_event_t;
+
+    fn xcb_create_pixmap(conn:      *mut xcb_connection_t,
+                         depth:     uint8_t,
+                         pixmap_id: xcb_pixmap_t,
+                         drawable:  xcb_drawable_t,
+                         width:     uint16_t,
+                         height:    uint16_t) -> xcb_void_cookie_t;
+
+    fn xcb_free_pixmap(conn:      *mut xcb_connection_t,
+                       pixmap_id: xcb_pixmap_t) -> xcb_void_cookie_t;
+
+    fn xcb_copy_area(conn:         *mut xcb_connection_t,
+                     src_drawable: xcb_drawable_t,
+                     dst_drawable: xcb_drawable_t,
+                     gc:           xcb_gcontext_t,
+                     src_x:        int16_t,
+                     src_y:        int16_t,
+                     dst_x:        int16_t,
+                     dst_y:        int16_t,
+                     width:        uint16_t,
+                     height:       uint16_t) -> xcb_void_cookie_t;
+
+    fn xcb_put_image(conn:     *mut xcb_connection_t,
+                     format:   uint8_t,
+                     drawable: xcb_drawable_t,
+                     gc:       xcb_gcontext_t,
+                     width:    uint16_t,
+                     height:   uint16_t,
+                     dst_x:    int16_t,
+                     dst_y:    int16_t,
+                     left_pad: uint8_t,
+                     depth:    uint8_t,
+                     data_len: uint32_t,
+                     data:     *const uint8_t) -> xcb_void_cookie_t;
 }
 
 // opaque structs
@@ -102,6 +148,14 @@ struct xcb_point_t {
 }
 
 #[repr(C)]
+struct xcb_rectangle_t {
+    x: int16_t,
+    y: int16_t,
+    width: uint16_t,
+    height: uint16_t,
+}
+
+#[repr(C)]
 struct xcb_generic_event_t {
     response_type: xcb_event_type_t,
     pad0: uint8_t,
@@ -115,13 +169,15 @@ struct xcb_generic_event_t {
 type xcb_colormap_t = uint32_t;
 type xcb_coord_mode_t = uint8_t;
 type xcb_cw_t = uint32_t;
-type xcb_drawable_t = uint32_t;
 type xcb_event_mask_t = uint32_t;
 type xcb_event_type_t = uint8_t;
 type xcb_gc_t = uint32_t;
 type xcb_gcontext_t = uint32_t;
 type xcb_visualid_t = uint32_t;
-type xcb_window_t = uint32_t;
+
+type xcb_drawable_t = uint32_t;
+type xcb_pixmap_t = xcb_drawable_t;
+type xcb_window_t = xcb_drawable_t;
 
 // xcb_gc_t constants
 
@@ -253,11 +309,11 @@ impl<'a> Window<'a> {
         let mut conn = unsafe {
             &mut *xcb_connect(null(), &mut scr_num)
         };
-        
+
         let setup = unsafe {
             xcb_get_setup(conn)
         };
-        
+
         let scr = unsafe {
             let iter = xcb_setup_roots_iterator(setup);
             &(*iter.data)
@@ -266,7 +322,7 @@ impl<'a> Window<'a> {
         let root_id = (*scr).root;
         let root_visual = (*scr).root_visual;
         let root_depth = (*scr).root_depth;
-       
+
         let win_id = unsafe {
             xcb_generate_id(conn)
         };
@@ -305,13 +361,13 @@ impl<'a> Window<'a> {
         Ok(win)
     }
 
-    fn create_gc(win: &mut Window) -> xcb_gcontext_t {
+    fn create_gc(win: &mut Window, colour: u32) -> xcb_gcontext_t {
         let gc_id = unsafe {
             xcb_generate_id(win.connection)
         };
 
-        let mask = XCB_GC_FOREGROUND;
-        let value: [uint32_t;1] = [win.screen.white_pixel];
+        let mask = XCB_GC_FOREGROUND | XCB_GC_BACKGROUND | XCB_GC_FILL_STYLE;
+        let value: [uint32_t;3] = [colour, win.screen.black_pixel, 0];
         unsafe {
             xcb_create_gc(win.connection, gc_id, win.id, mask, value.as_ptr());
         };
@@ -320,20 +376,52 @@ impl<'a> Window<'a> {
     }
 
     pub fn update(&mut self) {
-        let gc = Window::create_gc(self);
+        let white = self.screen.white_pixel.clone();
+        let gc_fg = Window::create_gc(self, white);
+        let gc_bg = Window::create_gc(self, 0x70707070);
+
         let points: Vec<xcb_point_t> = vec![
             xcb_point_t {x: 0, y:0},
             xcb_point_t {x: 1000, y:1000},
             xcb_point_t {x: 0, y:200},
             xcb_point_t {x: 200, y:0}];
 
+        let clear_rect = xcb_rectangle_t {
+            x: 0,
+            y: 0,
+            width: self.width,
+            height: self.height,
+        };
+
+        let pixmap_id = unsafe {
+            xcb_generate_id(self.connection)
+        };
+
         unsafe {
+            xcb_create_pixmap(self.connection,
+                              self.screen.root_depth,
+                              pixmap_id,
+                              self.id,
+                              self.width,
+                              self.height);
+            xcb_poly_fill_rectangle(self.connection,
+                                    pixmap_id,
+                                    gc_bg,
+                                    1,
+                                    &clear_rect);
             xcb_poly_line(self.connection,
                           XCB_COORD_MODE_ORIGIN,
-                          self.id,
-                          gc,
+                          pixmap_id,
+                          gc_fg,
                           points.len() as u32,
                           points.as_ptr());
+            xcb_copy_area(self.connection,
+                          pixmap_id,
+                          self.id,
+                          gc_bg,
+                          0, 0,
+                          0, 0,
+                          self.width, self.height);
             xcb_flush(self.connection);
         };
     }
